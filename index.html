@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Додавання та віднімання десяткових дробів</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; background-color: #f8f8f8; }
+        .exercise { display: inline-block; text-align: center; margin: 20px; }
+        .row { display: flex; justify-content: center; align-items: center; }
+        
+        .cell { width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; 
+                border: 1px dashed black; font-size: 24px; font-weight: bold; }
+        .blue { background-color: #a6d8ff; }
+        .white { background-color: white; }
+        .small { width: 25px; height: 25px; font-size: 32px; }
+        .coma { position: relative; left: -5px; top:12px; width: 10px; height: 25px;}
+        .oper { position: relative; left: -10px; top:-10px; }
+        .line { height: 5px; background-color: black; width: 80%; margin: 5px auto; }
+        input { width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid black; }
+        .check-button { margin-top: 20px; padding: 10px 20px; font-size: 18px; border: none; background-color: #6a5acd; 
+                        color: white; border-radius: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Додавання десяткових дробів у стовпчик</h2>
+    <div class="exercise">
+        <div class="row">
+        	<div class="cell blue"> </div>
+            <div style="width:0px"> 
+            	<div class="cell blue small coma "> </div>
+            </div>
+            <div class="cell blue">3</div>
+            <div style="width:0px"> 
+            	<div class="cell blue small coma ">,</div>
+            </div>
+            <div class="cell blue">4</div>
+            <div style="width:0px"> 
+            	<div class="cell blue small coma "> </div>
+            </div>
+            <div class="cell blue">5</div>
+            <div style="width:0px"> 
+            	<div class="cell blue small coma "> </div>
+            </div>
+            <div class="cell blue">5</div>
+            <div style="width:0px"> 
+            	<div class="cell blue small coma "> </div>
+            </div>
+            <div class="cell blue">5</div>
+        </div>
+       	<div style="height:5px"> 
+            	<div class="cell blue small oper">+</div>
+            </div>
+        
+        
+        <div class="row">
+            <div class="cell blue"> </div>
+            <div style="width:0px"> 
+            	<div class="cell blue small coma "> </div>
+            </div>
+            <div class="cell blue">3</div>
+            <div style="width:0px"> 
+            	<div class="cell blue small coma ">,</div>
+            </div>
+            <div class="cell blue">4</div>
+            <div style="width:0px"> 
+            	<div class="cell blue small coma "> </div>
+            </div>
+            <div class="cell blue">5</div>
+            <div style="width:0px"> 
+            	<div class="cell blue small coma "> </div>
+            </div>
+            <div class="cell blue">5</div>
+            <div style="width:0px"> 
+            	<div class="cell blue small coma "> </div>
+            </div>
+            <div class="cell blue">5</div>
+        </div>
+        <div class="line"></div>
+        <div class="row">
+        	<input class="cell white" type="text" id="ans1" maxlength="1">
+            <div style="width:0px"> 
+                <input class="cell white small coma " type="text" id="ans1" maxlength="1">
+            </div>
+            <input class="cell white" type="text" id="ans1" maxlength="1">
+            <div style="width:0px"> 
+            	<input class="cell white small coma " type="text" id="ans1" maxlength="1">
+            </div>
+            <input class="cell white" type="text" id="ans1" maxlength="1">
+            <div style="width:0px"> 
+            	<input class="cell white small coma " type="text" id="ans1" maxlength="1">
+            </div>
+            <input class="cell white" type="text" id="ans1" maxlength="1">
+            <div style="width:0px"> 
+            	<input class="cell white small coma " type="text" id="ans1" maxlength="1">
+            </div>
+            <input class="cell white" type="text" id="ans1" maxlength="1">
+            <div style="width:0px"> 
+            	<input class="cell white small coma " type="text" id="ans1" maxlength="1">
+            </div>
+            <input class="cell white" type="text" id="ans1" maxlength="1">
+            
+        </div>
+        <button class="check-button" onclick="checkAnswer()">Перевірити</button>
+        <p id="result"></p>
+    </div>
+    
+    <script>
+        function checkAnswer() {
+            let ans1 = document.getElementById('ans1').value;
+            let ans2 = document.getElementById('ans2').value;
+            let ans3 = document.getElementById('ans3').value;
+            let resultElement = document.getElementById('result');
+            
+            if (ans1 === "4" && ans2 === "7" && ans3 === "2") {
+                resultElement.textContent = "Правильно!";
+                resultElement.style.color = "green";
+            } else {
+                resultElement.textContent = "Неправильно, спробуйте ще раз.";
+                resultElement.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
