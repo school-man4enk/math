@@ -25,56 +25,56 @@
 <body>
     <h2>Додавання десяткових дробів у стовпчик</h2>
     <div class="exercise">
-        <div class="row">
-        	<div class="cell blue"> </div>
+        <div class="row" id="var_a">
+        	<div class="cell blue" id="var_a1"> </div>
             <div style="width:0px"> 
             	<div class="cell blue small coma "> </div>
             </div>
-            <div class="cell blue">3</div>
+            <div class="cell blue" id="var_a2">3</div>
             <div style="width:0px"> 
             	<div class="cell blue small coma ">,</div>
             </div>
-            <div class="cell blue">4</div>
+            <div class="cell blue" id="var_a3">4</div>
             <div style="width:0px"> 
             	<div class="cell blue small coma "> </div>
             </div>
-            <div class="cell blue">5</div>
+            <div class="cell blue" id="var_a4">5</div>
             <div style="width:0px"> 
             	<div class="cell blue small coma "> </div>
             </div>
-            <div class="cell blue">5</div>
+            <div class="cell blue" id="var_a5">5</div>
             <div style="width:0px"> 
             	<div class="cell blue small coma "> </div>
             </div>
             <div class="cell blue">5</div>
         </div>
-       	<div style="height:5px"> 
-            	<div class="cell blue small oper">+</div>
+       	<div style="height:5px" > 
+            	<div class="cell blue small oper" id="var_op">+</div>
             </div>
         
         
-        <div class="row">
-            <div class="cell blue"> </div>
+        <div class="row" id="var_b">
+            <div class="cell blue" id="var_b1"> </div>
             <div style="width:0px"> 
             	<div class="cell blue small coma "> </div>
             </div>
-            <div class="cell blue">3</div>
+            <div class="cell blue" id="var_b2">3</div>
             <div style="width:0px"> 
             	<div class="cell blue small coma ">,</div>
             </div>
-            <div class="cell blue">4</div>
+            <div class="cell blue" id="var_b3">4</div>
             <div style="width:0px"> 
             	<div class="cell blue small coma "> </div>
             </div>
-            <div class="cell blue">5</div>
+            <div class="cell blue" id="var_b4">5</div>
             <div style="width:0px"> 
             	<div class="cell blue small coma "> </div>
             </div>
-            <div class="cell blue">5</div>
+            <div class="cell blue" id="var_b5">5</div>
             <div style="width:0px"> 
             	<div class="cell blue small coma "> </div>
             </div>
-            <div class="cell blue">5</div>
+            <div class="cell blue" id="var_b6">5</div>
         </div>
         <div class="line"></div>
         <div class="row">
@@ -106,6 +106,8 @@
     </div>
     
     <script>
+    	var A=[];
+        var B=[];
         function checkAnswer() {
             let ans1 = document.getElementById('ans1').value;
             let ans2 = document.getElementById('ans2').value;
