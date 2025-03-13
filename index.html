@@ -26,101 +26,243 @@
     <h2>Додавання десяткових дробів у стовпчик</h2>
     <div class="exercise">
         <div class="row" id="var_a">
-        	<div class="cell blue" id="var_a1"> </div>
+            <div class="cell blue" id="var_a1"> </div>
             <div style="width:0px"> 
-            	<div class="cell blue small coma "> </div>
+                <div class="cell blue small coma " id="var_a_coma1"> </div>
             </div>
             <div class="cell blue" id="var_a2">3</div>
             <div style="width:0px"> 
-            	<div class="cell blue small coma ">,</div>
+                <div class="cell blue small coma " id="var_a_coma2">,</div>
             </div>
             <div class="cell blue" id="var_a3">4</div>
             <div style="width:0px"> 
-            	<div class="cell blue small coma "> </div>
+                <div class="cell blue small coma " id="var_a_coma3"> </div>
             </div>
             <div class="cell blue" id="var_a4">5</div>
             <div style="width:0px"> 
-            	<div class="cell blue small coma "> </div>
+                <div class="cell blue small coma "id="var_a_coma4"> </div>
             </div>
             <div class="cell blue" id="var_a5">5</div>
             <div style="width:0px"> 
-            	<div class="cell blue small coma "> </div>
+                <div class="cell blue small coma "
+                id="var_a_coma5"> </div>
             </div>
-            <div class="cell blue">5</div>
+            <div class="cell blue" id="var_a6">5</div>
         </div>
-       	<div style="height:5px" > 
-            	<div class="cell blue small oper" id="var_op">+</div>
+           <div style="height:5px" > 
+                <div class="cell blue small oper" id="var_op">+</div>
             </div>
         
         
         <div class="row" id="var_b">
             <div class="cell blue" id="var_b1"> </div>
             <div style="width:0px"> 
-            	<div class="cell blue small coma "> </div>
+                <div class="cell blue small coma" id="var_b_coma1"> </div>
             </div>
             <div class="cell blue" id="var_b2">3</div>
             <div style="width:0px"> 
-            	<div class="cell blue small coma ">,</div>
+                <div class="cell blue small coma "id="var_b_coma2">,</div>
             </div>
             <div class="cell blue" id="var_b3">4</div>
             <div style="width:0px"> 
-            	<div class="cell blue small coma "> </div>
+                <div class="cell blue small coma "id="var_b_coma3"> </div>
             </div>
             <div class="cell blue" id="var_b4">5</div>
             <div style="width:0px"> 
-            	<div class="cell blue small coma "> </div>
+                <div class="cell blue small coma "id="var_b_coma4"> </div>
             </div>
             <div class="cell blue" id="var_b5">5</div>
             <div style="width:0px"> 
-            	<div class="cell blue small coma "> </div>
+                <div class="cell blue small coma "
+                id="var_b_coma5"> </div>
             </div>
             <div class="cell blue" id="var_b6">5</div>
         </div>
         <div class="line"></div>
         <div class="row">
-        	<input class="cell white" type="text" id="ans1" maxlength="1">
-            <div style="width:0px"> 
-                <input class="cell white small coma " type="text" id="ans1" maxlength="1">
-            </div>
             <input class="cell white" type="text" id="ans1" maxlength="1">
             <div style="width:0px"> 
-            	<input class="cell white small coma " type="text" id="ans1" maxlength="1">
+                <input class="cell white small coma " type="text" id="ans_coma1" maxlength="1" onclick="enterComa(this)" readonly>
+                
             </div>
-            <input class="cell white" type="text" id="ans1" maxlength="1">
+            <input class="cell white" type="text" id="ans2" maxlength="1">
             <div style="width:0px"> 
-            	<input class="cell white small coma " type="text" id="ans1" maxlength="1">
+                <input class="cell white small coma " type="text" id="ans_coma2" maxlength="1" onclick="enterComa(this)" readonly>
             </div>
-            <input class="cell white" type="text" id="ans1" maxlength="1">
+            <input class="cell white" type="text" id="ans3" maxlength="1">
             <div style="width:0px"> 
-            	<input class="cell white small coma " type="text" id="ans1" maxlength="1">
+                <input class="cell white small coma " type="text" id="ans_coma3" maxlength="1" onclick="enterComa(this)" readonly>
             </div>
-            <input class="cell white" type="text" id="ans1" maxlength="1">
+            <input class="cell white" type="text" id="ans4" maxlength="1">
             <div style="width:0px"> 
-            	<input class="cell white small coma " type="text" id="ans1" maxlength="1">
+                <input class="cell white small coma " type="text" id="ans_coma4" maxlength="1" onclick="enterComa(this)" readonly>
             </div>
-            <input class="cell white" type="text" id="ans1" maxlength="1">
+            <input class="cell white" type="text" id="ans5" maxlength="1">
+            <div style="width:0px"> 
+                <input class="cell white small coma " type="text" id="ans_coma5" maxlength="1" onclick="enterComa(this)" readonly>
+            </div>
+            <input class="cell white" type="text" id="ans6" maxlength="1">
             
         </div>
-        <button class="check-button" onclick="checkAnswer()">Перевірити</button>
+        <button class="check-button" id="check" onclick="checkAnswer()">Перевірити</button>
         <p id="result"></p>
+        <p>Успішні спроби: <span id="successCount">0</span></p>
+        <p>Неуспішні спроби: <span id="failureCount">0</span></p>
+        <button class="check-button" id="next" onclick="new_Question()">Наступний приклад</button>
     </div>
     
     <script>
-    	var A=[];
-        var B=[];
-        function checkAnswer() {
-            let ans1 = document.getElementById('ans1').value;
-            let ans2 = document.getElementById('ans2').value;
-            let ans3 = document.getElementById('ans3').value;
-            let resultElement = document.getElementById('result');
-            
-            if (ans1 === "4" && ans2 === "7" && ans3 === "2") {
-                resultElement.textContent = "Правильно!";
-                resultElement.style.color = "green";
-            } else {
-                resultElement.textContent = "Неправильно, спробуйте ще раз.";
-                resultElement.style.color = "red";
+        var A = [document.getElementById('var_a1'), document.getElementById('var_a2'), document.getElementById('var_a3'), document.getElementById('var_a4'), document.getElementById('var_a5'), document.getElementById('var_a6')];
+        var B = [document.getElementById('var_b1'), document.getElementById('var_b2'), document.getElementById('var_b3'), document.getElementById('var_b4'), document.getElementById('var_b5'), document.getElementById('var_b6')];
+        var A_coma = [document.getElementById('var_a_coma1'), document.getElementById('var_a_coma2'), document.getElementById('var_a_coma3'), document.getElementById('var_a_coma4'), document.getElementById('var_a_coma5')];
+        var B_coma = [document.getElementById('var_b_coma1'), document.getElementById('var_b_coma2'), document.getElementById('var_b_coma3'), document.getElementById('var_b_coma4'), document.getElementById('var_b_coma5')];
+        var Rez = [document.getElementById('ans1'), document.getElementById('ans2'), document.getElementById('ans3'), document.getElementById('ans4'), document.getElementById('ans5'), document.getElementById('ans6')];
+        var rez_coma = [document.getElementById('ans_coma1'), document.getElementById('ans_coma2'), document.getElementById('ans_coma3'), document.getElementById('ans_coma4'), document.getElementById('ans_coma5')];
+
+        let checkButton = document.getElementById('check');
+        let nextButton = document.getElementById('next');
+        let resultElement = document.getElementById('result');
+        let successCountElement = document.getElementById('successCount');
+        let failureCountElement = document.getElementById('failureCount');
+
+        let correctSum;
+        let successCount = 0;
+        let failureCount = 0;
+
+        function new_Question() {
+            nextButton.style.display = "none";
+            checkButton.style.display = "";
+            resultElement.textContent = '';
+            for (let i = 0; i < Rez.length; i++) {
+                Rez[i].value = '';
+                Rez[i].removeAttribute('readonly');
             }
+            for (let i = 0; i < rez_coma.length; i++) {
+                rez_coma[i].value = ' ';
+            }
+
+            let num1 = (Math.random() * 100).toFixed(3).padStart(6, '0');
+            let num2 = (Math.random() * 100).toFixed(3).padStart(6, '0');
+            console.log(num1, num2);
+
+            correctSum = (parseFloat(num1) + parseFloat(num2)).toFixed(3).padStart(6, ' ');
+            console.log(correctSum);
+
+            let num1Array = num1.split('');
+            if (num1Array[0] === '0') {
+                num1Array[0]=" ";
+            }
+            if (num1Array[5] === '0') {
+                num1Array[5]=" ";
+                if (num1Array[4] === '0') {
+                    num1Array[4]=" ";
+                    if (num1Array[3] === '0') {
+                        num1Array[3]=" ";
+                    }
+                }
+            }
+
+
+            let num2Array = num2.split('');
+            if (num2Array[0] === '0') {
+                num2Array[0]=" ";
+            }
+            if (num2Array[5] === '0') {
+                num2Array[5]=" ";
+                if (num2Array[4] === '0') {
+                    num2Array[4]=" ";
+                    
+                    if (num2Array[3] === '0') {
+                        num2Array[3]=" ";
+                    }
+                }
+            }
+            console.log(num1Array, num2Array);
+
+            for (let i = 0; i < A.length; i++) {
+                A[i].textContent = '';
+            }
+            for (let i = 0; i < A_coma.length; i++) {
+                A_coma[i].textContent = '';
+            }
+            for (let i = 0; i < B.length; i++) {
+                B[i].textContent = '';
+            }
+            for (let i = 0; i < B_coma.length; i++) {
+                B_coma[i].textContent = '';
+            }
+
+            let comaa_pos = num1Array.indexOf('.');
+            A_coma[comaa_pos].textContent = ',';
+            for (let i=comaa_pos+1; i < A.length; i++) {
+                A[i].textContent = num1Array[i] || '';
+            }
+            for (let i=comaa_pos; i >0 ; i--) {
+                A[i].textContent = num1Array[i-1] || '';
+            }
+
+            comab_pos = num2Array.indexOf('.');
+            B_coma[comab_pos].textContent = ',';
+            for (let i = comab_pos+1; i < B.length; i++) {
+                B[i].textContent = num2Array[i] || '';
+            }
+            for (let i = comab_pos; i > 0; i--) {
+                B[i].textContent = num2Array[i-1] || '';
+            }
+            
+        }
+
+        new_Question();
+
+        function checkAnswer() {
+            let userAnswer = '';
+            for (let i = 0; i < Rez.length; i++) {
+                userAnswer += Rez[i].value || ' ';
+            }
+            let userComa = '';
+            
+            for (let i = 0; i < rez_coma.length; i++) {
+                userComa += rez_coma[i].value || ' ';
+            }
+            let anscoma_pos = userComa.search(',');
+            console.log(userComa);
+            if (anscoma_pos != -1) {
+                userAnswer = userAnswer.substring(0, anscoma_pos+1) + '.' + userAnswer.substring(anscoma_pos+1);
+            }
+            console.log(userAnswer);
+            
+            
+            
+            if (parseFloat(userAnswer) === parseFloat(correctSum)) {
+                resultElement.textContent = "Молодець, правильно!";
+                resultElement.style.color = "green";
+                nextButton.style.display = "";
+                checkButton.style.display = "none";
+                successCount++;
+                successCountElement.textContent = successCount;
+                
+                for (let i = 0; i < Rez.length; i++) {
+                    Rez[i].setAttribute('readonly', 'readonly');
+                }
+
+            } else {
+                resultElement.textContent = "Неправильно, спробуй ще раз.";
+                resultElement.style.color = "red";
+                nextButton.style.display = "none";
+                failureCount++;
+                failureCountElement.textContent = failureCount;
+            }
+        }
+
+        function enterComa(event) {
+
+            let coma = event;
+
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById('ans_coma' + i).value = ' ';
+            }
+
+            coma.value = ',';
         }
     </script>
 </body>
