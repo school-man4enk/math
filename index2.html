@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Перевірка знань: Розв'язування простих рівнянь</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; background-color: #f8f8f8; }
+        .exercise { display: inline-block; text-align: center; margin: 20px; }
+        .equation { font-size: 32px; font-weight: bold; margin: 20px 0; }
+        input[type="text"] { width: 80px; height: 50px; text-align: center; font-size: 24px; border: 2px solid black; border-radius: 8px; }
+        .check-button { margin-top: 20px; padding: 10px 20px; font-size: 18px; border: none; background-color: #6a5acd; 
+                        color: white; border-radius: 20px; cursor: pointer; }
+        #result { font-size: 22px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <h2>Розв'яжи просте рівняння</h2>
+    <div class="exercise">
+        <div class="equation" id="equation"></div>
+        <input type="text" id="userAnswer" autocomplete="off" placeholder="x = ?" />
+        <br>
+        <button class="check-button" id="check" onclick="checkEquation()">Перевірити</button>
+        <p id="result"></p>
+        <p>Успішні спроби: <span id="successCount">0</span></p>
+        <p>Неуспішні спроби: <span id="failureCount">0</span></p>
+        <button class="check-button" id="next" onclick="newEquation()">Наступне рівняння</button>
+    </div>
+    <script>
+        let equationElem = document.getElementById('equation');
+        let userAnswerElem = document.getElementById('userAnswer');
+        let checkButton = document.getElementById('check');
+        let nextButton = document.getElementById('next');
+        let resultElem = document.getElementById('result');
+        let successCountElem = document.getElementById('successCount');
+        let failureCountElem = document.getElementById('failureCount');
+
+        let correctAnswer = 0;
+        let successCount = 0;
+        let failureCount = 0;
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function newEquation() {
+            nextButton.style.display = "none";
+            checkButton.style.display = "";
+            resultElem.textContent = '';
+            userAnswerElem.value = '';
+            userAnswerElem.removeAttribute('readonly');
+            userAnswerElem.focus();
+            
+            // Випадковий вибір типу рівняння з 8 варіантів
+            let eqType = getRandomInt(1, 8);
+            let a, b, x, c;
+
+            switch (eqType) {
+                case 1:
+                    // x + b = c
+                    x = getRandomInt(1, 30);
+                    b = getRandomInt(1, 20);
+                    c = x + b;
+                    equationElem.textContent = `x + ${b} = ${c}`;
+                    correctAnswer = x;
+                    break;
+                case 2:
+                    // a + x = c
+                    a = getRandomInt(1, 20);
+                    x = getRandomInt(1, 30);
+                    c = a + x;
+                    equationElem.textContent = `${a} + x = ${c}`;
+                    correctAnswer = x;
+                    break;
+                case 3:
+                    // a - x = c
+                    x = getRandomInt(1, 20);
+                    c = getRandomInt(1, 20);
+                    a = x + c;
+                    equationElem.textContent = `${a} - x = ${c}`;
+                    correctAnswer = x;
+                    break;
+                case 4:
+                    // x - b = c
+                    b = getRandomInt(1, 20);
+                    c = getRandomInt(1, 20);
+                    x = b + c;
+                    equationElem.textContent = `x - ${b} = ${c}`;
+                    correctAnswer = x;
+                    break;
+                case 5:
+                    // a * x = c
+                    a = getRandomInt(2, 10);
+                    x = getRandomInt(1, 10);
+                    c = a * x;
+                    equationElem.textContent = `${a} × x = ${c}`;
+                    correctAnswer = x;
+                    break;
+                case 6:
+                    // x * a = c
+                    a = getRandomInt(2, 10);
+                    x = getRandomInt(1, 10);
+                    c = x * a;
+                    equationElem.textContent = `x × ${a} = ${c}`;
+                    correctAnswer = x;
+                    break;
+                case 7:
+                    // a / x = c
+                    c = getRandomInt(1, 10);
+                    x = getRandomInt(1, 10);
+                    a = c * x;
+                    equationElem.textContent = `${a} : x = ${c}`;
+                    correctAnswer = x;
+                    break;
+                case 8:
+                    // x / b = c
+                    b = getRandomInt(2, 10);
+                    c = getRandomInt(1, 10);
+                    x = b * c;
+                    equationElem.textContent = `x : ${b} = ${c}`;
+                    correctAnswer = x;
+                    break;
+            }   
+        }
+
+        newEquation();
+
+        function checkEquation() {
+            let userValue = userAnswerElem.value.replace(',', '.').trim();
+            if (userValue === '') {
+                resultElem.textContent = "Введіть відповідь!";
+                resultElem.style.color = "red";
+                return;
+            }
+            if (parseFloat(userValue) === correctAnswer) {
+                resultElem.textContent = "Молодець, правильно!";
+                resultElem.style.color = "green";
+                nextButton.style.display = "";
+                checkButton.style.display = "none";
+                successCount++;
+                successCountElem.textContent = successCount;
+                userAnswerElem.setAttribute('readonly', 'readonly');
+            } else {
+                resultElem.textContent = "Неправильно, спробуй ще раз.";
+                resultElem.style.color = "red";
+                nextButton.style.display = "none";
+                failureCount++;
+                failureCountElem.textContent = failureCount;
+            }
+        }
+
+        // Дозволяє натискати Enter для перевірки
+        userAnswerElem.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') checkEquation();
+        });
+    </script>
+</body>
+</html>
