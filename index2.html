@@ -18,7 +18,7 @@
     <h2>Розв'яжи просте рівняння</h2>
     <div class="exercise">
         <div class="equation" id="equation"></div>
-        <input type="text" id="userAnswer" autocomplete="off" placeholder="x = ?" />
+        <input type="number" id="userAnswer" autocomplete="off" placeholder="x = ?" step="any" />
         <br>
         <button class="check-button" id="check" onclick="checkEquation()">Перевірити</button>
         <p id="result"></p>
@@ -50,7 +50,7 @@
             userAnswerElem.value = '';
             userAnswerElem.removeAttribute('readonly');
             userAnswerElem.focus();
-            
+
             // Випадковий вибір типу рівняння з 8 варіантів
             let eqType = getRandomInt(1, 8);
             let a, b, x, c;
@@ -93,7 +93,7 @@
                     a = getRandomInt(2, 10);
                     x = getRandomInt(1, 10);
                     c = a * x;
-                    equationElem.textContent = `${a} × x = ${c}`;
+                    equationElem.textContent = `${a} ⋅ x = ${c}`;
                     correctAnswer = x;
                     break;
                 case 6:
@@ -101,7 +101,7 @@
                     a = getRandomInt(2, 10);
                     x = getRandomInt(1, 10);
                     c = x * a;
-                    equationElem.textContent = `x × ${a} = ${c}`;
+                    equationElem.textContent = `x ⋅ ${a} = ${c}`;
                     correctAnswer = x;
                     break;
                 case 7:
