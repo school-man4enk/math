@@ -97,6 +97,7 @@
             btns.forEach(btn => {
                 btn.style.backgroundColor = "#6a5acd";
                 btn.classList.remove('selected');
+                btn.style.display = ""; // Показати всі кнопки знову
             });
 
             userAnswerElem.style.backgroundColor = '';
@@ -192,15 +193,21 @@
             btns.forEach(btn => btn.classList.remove('selected'));
             if (btnElem) btnElem.classList.add('selected');
             if (element === correctElement) {
-                elementResultElem.textContent = "Вірно! Тепер знайди x.";
-                elementResultElem.style.color = "green";
-                userAnswerElem.disabled = false;
-                userAnswerElem.focus();
-                elementAnswered = true;
-                answerButtons.style.pointerEvents = "none";
+            elementResultElem.textContent = "Вірно! Тепер знайди x.";
+            elementResultElem.style.color = "green";
+            userAnswerElem.disabled = false;
+            userAnswerElem.focus();
+            elementAnswered = true;
+            answerButtons.style.pointerEvents = "none";
+            // Приховати всі інші кнопки, залишити лише обрану
+            btns.forEach(btn => {
+                if (btn !== btnElem) {
+                btn.style.display = "none";
+                }
+            });
             } else {
-                elementResultElem.textContent = "Неправильно. Спробуй ще раз.";
-                elementResultElem.style.color = "red";
+            elementResultElem.textContent = "Неправильно. Спробуй ще раз.";
+            elementResultElem.style.color = "red";
             }
         }
 
