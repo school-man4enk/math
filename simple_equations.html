@@ -209,8 +209,10 @@
                 }
             });
             } else {
-            elementResultElem.textContent = "Неправильно. Спробуй ще раз.";
-            elementResultElem.style.color = "red";
+                elementResultElem.textContent = "Неправильно. Спробуй ще раз.";
+                elementResultElem.style.color = "red";
+                failureCount++;
+                failureCountElem.textContent = failureCount;
             }
         }
 
