@@ -18,6 +18,16 @@
     <h2>Розв'яжи просте рівняння</h2>
     <div class="exercise">
         <div class="equation" id="equation"></div>
+        <div id="question" style="font-size:20px; margin-bottom:10px;">Який елемент рівняння не відомий?</div>
+        <div id="answerButtons" style="margin-bottom:20px;">
+            <button class="check-button" type="button" onclick="selectElement('доданок')">доданок</button>
+            <button class="check-button" type="button" onclick="selectElement('зменшуване')">зменшуване</button>
+            <button class="check-button" type="button" onclick="selectElement('від\'ємник')">від'ємник</button>
+            <button class="check-button" type="button" onclick="selectElement('ділене')">ділене</button>
+            <button class="check-button" type="button" onclick="selectElement('дільник')">дільник</button>
+            <button class="check-button" type="button" onclick="selectElement('множник')">множник</button>
+        </div>
+        <div id="elementResult" style="font-size:18px; margin-bottom:10px;"></div>
         <input type="number" id="userAnswer" autocomplete="off" placeholder="x = ?" step="any" />
         <br>
         <button class="check-button" id="check" onclick="checkEquation()">Перевірити</button>
@@ -34,8 +44,12 @@
         let resultElem = document.getElementById('result');
         let successCountElem = document.getElementById('successCount');
         let failureCountElem = document.getElementById('failureCount');
+        let elementResultElem = document.getElementById('elementResult');
+        let answerButtons = document.getElementById('answerButtons');
 
         let correctAnswer = 0;
+        let correctElement = '';
+        let elementAnswered = false;
         let successCount = 0;
         let failureCount = 0;
 
@@ -47,9 +61,19 @@
             nextButton.style.display = "none";
             checkButton.style.display = "";
             resultElem.textContent = '';
+            elementResultElem.textContent = '';
             userAnswerElem.value = '';
             userAnswerElem.removeAttribute('readonly');
-            userAnswerElem.focus();
+            userAnswerElem.disabled = true;
+            elementAnswered = false;
+            answerButtons.style.pointerEvents = '';
+            let btns = answerButtons.querySelectorAll('button');
+            btns.forEach(btn => btn.style.backgroundColor = "#6a5acd");
+
+            userAnswerElem.style.backgroundColor = '';
+            userAnswerElem.value = '';
+            userAnswerElem.placeholder = "x = ?";
+            userAnswerElem.blur();
 
             // Випадковий вибір типу рівняння з 8 варіантів
             let eqType = getRandomInt(1, 8);
@@ -63,6 +87,7 @@
                     c = x + b;
                     equationElem.textContent = `x + ${b} = ${c}`;
                     correctAnswer = x;
+                    correctElement = "доданок";
                     break;
                 case 2:
                     // a + x = c
@@ -71,6 +96,7 @@
                     c = a + x;
                     equationElem.textContent = `${a} + x = ${c}`;
                     correctAnswer = x;
+                    correctElement = "доданок";
                     break;
                 case 3:
                     // a - x = c
@@ -79,6 +105,7 @@
                     a = x + c;
                     equationElem.textContent = `${a} - x = ${c}`;
                     correctAnswer = x;
+                    correctElement = "від'ємник";
                     break;
                 case 4:
                     // x - b = c
@@ -87,6 +114,7 @@
                     x = b + c;
                     equationElem.textContent = `x - ${b} = ${c}`;
                     correctAnswer = x;
+                    correctElement = "зменшуване";
                     break;
                 case 5:
                     // a * x = c
@@ -95,6 +123,7 @@
                     c = a * x;
                     equationElem.textContent = `${a} ⋅ x = ${c}`;
                     correctAnswer = x;
+                    correctElement = "множник";
                     break;
                 case 6:
                     // x * a = c
@@ -103,6 +132,7 @@
                     c = x * a;
                     equationElem.textContent = `x ⋅ ${a} = ${c}`;
                     correctAnswer = x;
+                    correctElement = "множник";
                     break;
                 case 7:
                     // a / x = c
@@ -111,6 +141,7 @@
                     a = c * x;
                     equationElem.textContent = `${a} : x = ${c}`;
                     correctAnswer = x;
+                    correctElement = "дільник";
                     break;
                 case 8:
                     // x / b = c
@@ -119,13 +150,42 @@
                     x = b * c;
                     equationElem.textContent = `x : ${b} = ${c}`;
                     correctAnswer = x;
+                    correctElement = "ділене";
                     break;
             }   
         }
 
         newEquation();
 
+        function selectElement(element) {
+            if (elementAnswered) return;
+            let btns = answerButtons.querySelectorAll('button');
+            btns.forEach(btn => {
+                if (btn.textContent === element) {
+                    btn.style.backgroundColor = "#4682b4";
+                } else {
+                    btn.style.backgroundColor = "#6a5acd";
+                }
+            });
+            if (element === correctElement) {
+                elementResultElem.textContent = "Вірно! Тепер знайди x.";
+                elementResultElem.style.color = "green";
+                userAnswerElem.disabled = false;
+                userAnswerElem.focus();
+                elementAnswered = true;
+                answerButtons.style.pointerEvents = "none";
+            } else {
+                elementResultElem.textContent = "Неправильно. Спробуй ще раз.";
+                elementResultElem.style.color = "red";
+            }
+        }
+
         function checkEquation() {
+            if (!elementAnswered) {
+                resultElem.textContent = "Спочатку обери елемент!";
+                resultElem.style.color = "red";
+                return;
+            }
             let userValue = userAnswerElem.value.replace(',', '.').trim();
             if (userValue === '') {
                 resultElem.textContent = "Введіть відповідь!";
@@ -140,12 +200,14 @@
                 successCount++;
                 successCountElem.textContent = successCount;
                 userAnswerElem.setAttribute('readonly', 'readonly');
+                userAnswerElem.style.backgroundColor = "#d4ffd4";
             } else {
                 resultElem.textContent = "Неправильно, спробуй ще раз.";
                 resultElem.style.color = "red";
                 nextButton.style.display = "none";
                 failureCount++;
                 failureCountElem.textContent = failureCount;
+                userAnswerElem.style.backgroundColor = "#ffd4d4";
             }
         }
 
