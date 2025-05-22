@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Додавання та віднімання звичайних дробів</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; background-color: #f8f8f8; }
+        .exercise { display: inline-block; text-align: center; margin: 20px; }
+        .frac-row { display: flex; justify-content: center; align-items: flex-end; margin-bottom: 10px; }
+        .frac {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+        }
+        .frac input, .frac .num, .frac .den {
+            width: 38px;
+            height: 38px;
+            font-size: 22px;
+            text-align: center;
+            border: 2px solid #6a5acd;
+            border-radius: 8px;
+            margin: 0;
+            background: #fff;
+        }
+        .frac .line {
+            width: 38px;
+            height: 2px;
+            background: #6a5acd;
+            margin: 0;
+        }
+        .whole {
+            width: 38px;
+            height: 38px;
+            font-size: 22px;
+            text-align: center;
+            border: 2px solid #6a5acd;
+            border-radius: 8px;
+            margin-right: 6px;
+            background: #fff;
+        }
+        .sign {
+            font-size: 32px;
+            margin: 0 12px;
+            color: #6a5acd;
+            font-weight: bold;
+        }
+        .equals {
+            font-size: 32px;
+            margin: 0 12px;
+            color: #222;
+            font-weight: bold;
+        }
+        .check-button { margin-top: 20px; padding: 10px 20px; font-size: 18px; border: none; background-color: #6a5acd; 
+                        color: white; border-radius: 20px; cursor: pointer; transition: background 0.2s; }
+        #result { font-size: 22px; margin-top: 15px; }
+        @media (max-width: 600px) {
+            .frac input, .frac .num, .frac .den, .whole { width: 28px; height: 28px; font-size: 16px; }
+            .sign, .equals { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <a href="/math" title="На головну" style="position: absolute; left: 20px; top: 20px; text-decoration: none; font-size: 28px; color: #6a5acd; background: #fff; border: 1px solid #6a5acd; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; box-shadow: 0 2px 6px #eee;">
+        &#8592;
+    </a>
+    <h2>Додавання та віднімання звичайних дробів і змішаних чисел</h2>
+    <div class="exercise">
+        <div class="frac-row" id="task-row">
+            <!-- Приклад генерується тут -->
+        </div>
+        <div class="frac-row" id="answer-row">
+            <input class="whole" type="number" id="ans_whole" placeholder="ціле" min="0" />
+            <div class="frac">
+                <input class="num" type="number" id="ans_num" placeholder="числ." min="0" />
+                <div class="line"></div>
+                <input class="den" type="number" id="ans_den" placeholder="знам." min="1" />
+            </div>
+        </div>
+        <button class="check-button" id="check" onclick="checkAnswer()">Перевірити</button>
+        <p id="result"></p>
+        <p>Успішні спроби: <span id="successCount">0</span></p>
+        <p>Неуспішні спроби: <span id="failureCount">0</span></p>
+        <button class="check-button" id="next" onclick="newQuestion()">Наступний приклад</button>
+    </div>
+    <script>
+        let taskRow = document.getElementById('task-row');
+        let ansWhole = document.getElementById('ans_whole');
+        let ansNum = document.getElementById('ans_num');
+        let ansDen = document.getElementById('ans_den');
+        let checkButton = document.getElementById('check');
+        let nextButton = document.getElementById('next');
+        let resultElem = document.getElementById('result');
+        let successCountElem = document.getElementById('successCount');
+        let failureCountElem = document.getElementById('failureCount');
+
+        let correct = {whole: 0, num: 0, den: 1};
+        let successCount = 0;
+        let failureCount = 0;
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function gcd(a, b) {
+            while (b) [a, b] = [b, a % b];
+            return a;
+        }
+
+        function simplify(num, den) {
+            let d = gcd(Math.abs(num), Math.abs(den));
+            return [num / d, den / d];
+        }
+
+        function newQuestion() {
+            nextButton.style.display = "none";
+            checkButton.style.display = "";
+            resultElem.textContent = '';
+            ansWhole.value = '';
+            ansNum.value = '';
+            ansDen.value = '';
+            ansWhole.removeAttribute('readonly');
+            ansNum.removeAttribute('readonly');
+            ansDen.removeAttribute('readonly');
+
+            // Випадково: змішані чи прості дроби
+            let typeA = getRandomInt(0, 1); // 0 - простий, 1 - змішане
+            let typeB = getRandomInt(0, 1);
+
+            // Однаковий знаменник
+            let den = getRandomInt(2, 12);
+
+            // Чисельники
+            let numA = getRandomInt(1, den - 1);
+            let numB = getRandomInt(1, den - 1);
+
+            // Цілі частини
+            let wholeA = typeA ? getRandomInt(1, 5) : 0;
+            let wholeB = typeB ? getRandomInt(1, 5) : 0;
+
+            // Операція
+            let op = getRandomInt(0, 1) ? '+' : '−';
+
+            // Віднімання: забезпечити, щоб результат не був від'ємним
+            if (op === '−') {
+                let totalA = wholeA * den + numA;
+                let totalB = wholeB * den + numB;
+                if (totalA < totalB) {
+                    // Міняємо місцями
+                    [wholeA, numA, wholeB, numB] = [wholeB, numB, wholeA, numA];
+                }
+            }
+
+            // Відображення прикладу
+            taskRow.innerHTML = `
+                ${wholeA ? `<input class="whole" value="${wholeA}" readonly />` : ''}
+                <div class="frac">
+                    <input class="num" value="${numA}" readonly />
+                    <div class="line"></div>
+                    <input class="den" value="${den}" readonly />
+                </div>
+                <span class="sign">${op}</span>
+                ${wholeB ? `<input class="whole" value="${wholeB}" readonly />` : ''}
+                <div class="frac">
+                    <input class="num" value="${numB}" readonly />
+                    <div class="line"></div>
+                    <input class="den" value="${den}" readonly />
+                </div>
+                <span class="equals">=</span>
+            `;
+
+            // Розрахунок правильної відповіді
+            let n1 = wholeA * den + numA;
+            let n2 = wholeB * den + numB;
+            let resNum = op === '+' ? n1 + n2 : n1 - n2;
+            let resWhole = Math.floor(resNum / den);
+            let resFracNum = resNum % den;
+            let [simpNum, simpDen] = simplify(resFracNum, den);
+
+            // Якщо дробова частина = 0, знаменник = 1
+            if (simpNum === 0) simpDen = 1;
+
+            correct = {
+                whole: resWhole,
+                num: simpNum,
+                den: simpDen
+            };
+        }
+
+        newQuestion();
+
+        function checkAnswer() {
+            let userWhole = parseInt(ansWhole.value) || 0;
+            let userNum = parseInt(ansNum.value) || 0;
+            let userDen = parseInt(ansDen.value) || 1;
+
+            // Привести до нескоротного вигляду
+            let [simpNum, simpDen] = simplify(userNum, userDen);
+
+            // Якщо дробова частина більше за знаменник, виділити цілу частину
+            if (simpNum >= simpDen) {
+                userWhole += Math.floor(simpNum / simpDen);
+                simpNum = simpNum % simpDen;
+            }
+
+            if (
+                userWhole === correct.whole &&
+                simpNum === correct.num &&
+                simpDen === correct.den
+            ) {
+                resultElem.textContent = "Молодець, правильно!";
+                resultElem.style.color = "green";
+                nextButton.style.display = "";
+                checkButton.style.display = "none";
+                successCount++;
+                successCountElem.textContent = successCount;
+                ansWhole.setAttribute('readonly', 'readonly');
+                ansNum.setAttribute('readonly', 'readonly');
+                ansDen.setAttribute('readonly', 'readonly');
+            } else {
+                resultElem.textContent = "Неправильно, спробуй ще раз.";
+                resultElem.style.color = "red";
+                nextButton.style.display = "none";
+                failureCount++;
+                failureCountElem.textContent = failureCount;
+            }
+        }
+
+        // Enter для перевірки
+        [ansWhole, ansNum, ansDen].forEach(el => {
+            el.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') checkAnswer();
+            });
+        });
+    </script>
+    <footer style="text-align:center; color:#888; font-size:0.98em; padding:18px 0 12px 0;">
+        © 2024-2025 Математичні тренажери. Колгатін Андрій Олександрович.
+    </footer>
+</body>
+</html>
