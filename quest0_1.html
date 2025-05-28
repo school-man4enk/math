@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Кодовий замок</title>
+  <style>
+    @keyframes openBox {
+      0% { transform: scale(1) rotateY(0deg); background-color: #fff; }
+      50% { transform: scale(1.05) rotateY(90deg); background-color: #d4ffd4; }
+      100% { transform: scale(1) rotateY(180deg); background-color: #ffffff; }
+    }
+
+    @keyframes shakeBox {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+
+    body {
+      font-family: sans-serif;
+      background: #f0f8ff;
+      text-align: center;
+      padding: 40px;
+    }
+    .lock-box {
+      background: #ffffff;
+      border: 2px solid #ccc;
+      border-radius: 15px;
+      padding: 20px;
+      display: inline-block;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      margin-top: 10px;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Спробуй відкрити скриньку!</h1>
+  <p>Кожна цифра коду може бути числом від 1 до 6.<br>Центральна цифра має дорівнювати 3.</p>
+
+  <div class="lock-box">
+    <div style="margin-bottom: 20px;">
+      <svg width="200" height="100">
+        <rect x="10" y="30" width="40" height="40" rx="8" fill="#ddd" stroke="#999" stroke-width="2"></rect>
+        <rect x="80" y="30" width="40" height="40" rx="8" fill="#ddd" stroke="#999" stroke-width="2"></rect>
+        <rect x="150" y="30" width="40" height="40" rx="8" fill="#ddd" stroke="#999" stroke-width="2"></rect>
+        <text id="svgDigit1" x="30" y="57" font-size="20" text-anchor="middle" fill="#333">?</text>
+        <text id="svgDigit2" x="100" y="57" font-size="20" text-anchor="middle" fill="#333">?</text>
+        <text id="svgDigit3" x="170" y="57" font-size="20" text-anchor="middle" fill="#333">?</text>
+      </svg>
+    </div>
+
+    <div id="numpad" style="margin-top:20px;">
+      <p><strong>Виберіть цифру (1-6), щоб заповнити комірки:</strong></p>
+      <div style="display:grid; grid-template-columns: repeat(3, 60px); gap: 10px; justify-content:center;">
+        <button onclick="enterDigit(1)">1</button>
+        <button onclick="enterDigit(2)">2</button>
+        <button onclick="enterDigit(3)">3</button>
+        <button onclick="enterDigit(4)">4</button>
+        <button onclick="enterDigit(5)">5</button>
+        <button onclick="enterDigit(6)">6</button>
+      </div>
+    </div>
+
+    <div id="codeInput" style="margin-top: 20px;">
+      <button onclick="checkCode()">Ввести код</button>
+      <div class="result" id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    function checkCode() {
+      const svg1 = document.getElementById("svgDigit1").textContent;
+      const svg2 = document.getElementById("svgDigit2").textContent;
+      const svg3 = document.getElementById("svgDigit3").textContent;
+
+      const d1 = parseInt(svg1);
+      const d2 = parseInt(svg2);
+      const d3 = parseInt(svg3);
+
+      if (isNaN(d1) || isNaN(d2) || isNaN(d3)) {
+        document.getElementById("result").innerText = "Введіть усі цифри!";
+        return;
+      }
+      if (d1 < 1 || d1 > 6 || d2 < 1 || d2 > 6 || d3 < 1 || d3 > 6) {
+        document.getElementById("result").innerText = "Цифри мають бути від 1 до 6.";
+        return;
+      }
+      if (d2 !== 3) {
+        document.getElementById("result").innerText = "Центральна цифра має дорівнювати 3!";
+        return;
+      }
+
+      const randomCode = [
+        Math.floor(Math.random() * 6) + 1,
+        3,
+        Math.floor(Math.random() * 6) + 1
+      ];
+      const entered = [d1, d2, d3];
+      const box = document.querySelector(".lock-box");
+
+      if (entered[0] === randomCode[0] && entered[1] === 3 && entered[2] === randomCode[2]) {
+        document.querySelectorAll('#numpad button, #codeInput button').forEach(btn => btn.disabled = true);
+        box.style.animation = "openBox 1s ease-in-out";
+        setTimeout(() => {
+          box.innerHTML = `
+            <h2>Вітаю, ти відкрив скриньку! Давай подивимось що всередині</h2>
+            <div style="margin-top: 40px; font-size: 1.2em;">
+              У скриньці лежить стародавній свиток, давай подивимось що у ньому<br><br>
+              <a href='quest0_2.html' style="font-size: 1.1em; color: darkblue; text-decoration: underline;">Перейти до наступної частини квесту</a>
+            </div>`;
+        }, 1000);
+      } else {
+        document.getElementById("result").innerText = "Код невірний. Спробуй ще!";
+        box.style.animation = "shakeBox 0.4s ease";
+        setTimeout(() => box.style.animation = "", 400);
+      }
+    }
+
+    function enterDigit(digit) {
+      const svg1 = document.getElementById("svgDigit1");
+      const svg2 = document.getElementById("svgDigit2");
+      const svg3 = document.getElementById("svgDigit3");
+
+      if (svg1.textContent === "?") {
+        svg1.textContent = digit;
+      } else if (svg2.textContent === "?") {
+        svg2.textContent = digit;
+      } else if (svg3.textContent === "?") {
+        svg3.textContent = digit;
+      } else {
+        svg1.textContent = digit;
+        svg2.textContent = "?";
+        svg3.textContent = "?";
+      }
+    }
+  </script>
+
+  <footer style="text-align:center; color:#888; font-size:0.98em; padding:18px 0 12px 0;">
+        © 2024-2025 Математичні тренажери. Колгатін Андрій Олександрович.
+    </footer>
+</body>
+</html>

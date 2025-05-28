@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рівні Дроби - Замок та Ключ (5 Замків)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .fraction-display {
+            font-size: 2em; /* Зменшено для кращого розміщення 5 замків */
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #e5e7eb; /* Tailwind gray-200 */
+            border-radius: 0.75rem; /* Tailwind rounded-xl */
+            display: inline-block;
+            min-width: 100px;
+            background-color: #f9fafb; /* Tailwind gray-50 */
+        }
+        .fraction-line {
+            border-top: 2px solid #1f2937; /* Tailwind gray-800 */
+            margin: 5px 0;
+        }
+        .numerator {
+            display: block;
+            color: #111827; /* Tailwind gray-900 */
+        }
+        .denominator {
+            display: block;
+            color: #111827; /* Tailwind gray-900 */
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5); /* Increased overlay darkness */
+        }
+        .modal-content {
+            background-color: #ffffff;
+            margin: 10% auto; /* Adjusted margin for better centering */
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 600px; /* Increased max-width for more detailed feedback */
+            text-align: left; /* Align text left for better readability of list */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .modal-button {
+            font-size: 1.125rem;
+            padding: 0.75rem 1.5rem;
+            margin-top: 1.5rem; /* Increased margin */
+            cursor: pointer;
+            border: none;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s;
+            display: block; /* Make button block to center it */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .problem-item input[type="number"] {
+            width: 5rem; /* w-20 */
+            font-size: 1.25rem; /* text-xl */
+            text-align: center;
+            border-width: 2px;
+            border-radius: 0.375rem; /* rounded-md */
+            padding: 0.25rem; /* p-1 */
+            background-color: white;
+        }
+        .input-correct {
+            border-color: #10b981; /* green-500 */
+        }
+        .input-incorrect {
+            border-color: #ef4444; /* red-500 */
+        }
+        .input-default {
+            border-color: #a3e635; /* lime-300 */
+        }
+        .inline-button-link {
+            background: none;
+            border: none;
+            color: #3b82f6; /* Tailwind blue-500 */
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 0;
+            font-size: inherit;
+        }
+        .inline-button-link:hover {
+            color: #1d4ed8; /* Tailwind blue-700 */
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-sky-100 to-indigo-200 flex flex-col items-center justify-center min-h-screen p-4 selection:bg-indigo-500 selection:text-white">
+
+    <div class="container bg-white p-6 sm:p-8 md:p-10 rounded-xl shadow-2xl text-center max-w-4xl w-full">
+        <h1 class="text-3xl sm:text-4xl font-bold text-indigo-700 mb-6">🔑 Гра "Підбери Ключ до Замка" (5 Замків) 🔑</h1>
+        <p class="text-gray-700 text-base sm:text-lg mb-8">
+            Вкажіть чисельники на ключах так, щоб отримати дроби, рівні дробам на замках.
+        </p>
+
+        <div id="problemsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            </div>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+            <button onclick="checkAllFractions()" class="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-150 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">
+                Перевірити Всі
+            </button>
+            <button onclick="generateNewProblemSet()" class="w-full sm:w-auto bg-sky-500 hover:bg-sky-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-150 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-opacity-75">
+                Новий Набір Замків
+            </button>
+        </div>
+    </div>
+
+    <div id="feedbackModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle" class="text-2xl font-semibold mb-4 text-center">Результати</h3>
+            <div id="overallFeedbackModalText" class="text-base mb-6" style="white-space: pre-line;"></div>
+            <button id="closeModalButton" class="modal-button bg-indigo-500 hover:bg-indigo-600 text-white">Закрити</button>
+        </div>
+    </div>
+
+    <script>
+        let problemsData = []; // Array to hold data for 5 problems
+        const NUM_PROBLEMS = 5;
+
+        // DOM Elements for modal
+        const feedbackModal = document.getElementById('feedbackModal');
+        const overallFeedbackModalTextEl = document.getElementById('overallFeedbackModalText');
+        const modalTitleEl = document.getElementById('modalTitle');
+        const closeModalButton = document.getElementById('closeModalButton');
+
+        // Function to show modal
+        function showModal(message, title = "Результати") {
+            overallFeedbackModalTextEl.innerHTML = message; // Use innerHTML to render <br> and other HTML tags
+            modalTitleEl.textContent = title;
+            feedbackModal.style.display = 'flex';
+            feedbackModal.classList.add('items-center', 'justify-center');
+        }
+
+        // Function to hide modal
+        function hideModal() {
+            feedbackModal.style.display = 'none';
+        }
+
+        // Event listener for closing modal
+        closeModalButton.onclick = hideModal;
+        window.onclick = function(event) {
+            if (event.target == feedbackModal) {
+                hideModal();
+            }
+        }
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function greatestCommonDivisor(a, b) {
+            return b === 0 ? a : greatestCommonDivisor(b, a % b);
+        }
+
+        function generateNewProblemSet() {
+            // This function generates a new set of 5 fraction problems.
+            problemsData = []; // Reset the problems array
+            const problemsContainer = document.getElementById('problemsContainer');
+            problemsContainer.innerHTML = ''; // Clear previous problems
+
+            for (let i = 0; i < NUM_PROBLEMS; i++) {
+                let num1 = getRandomInt(1, 9);
+                let den1 = getRandomInt(2, 10);
+                while (den1 === num1) { den1 = getRandomInt(2, 10); }
+
+                let gcd_base = greatestCommonDivisor(num1, den1);
+                let baseNum = num1 / gcd_base;
+                let baseDen = den1 / gcd_base;
+
+                let multiplier1 = getRandomInt(1, 4);
+                let currentLockNum = baseNum * multiplier1;
+                let currentLockDen = baseDen * multiplier1;
+
+                let multiplier2 = getRandomInt(1, 5);
+                let attempts = 0;
+                // Try to make the key's fraction different from the lock's if possible
+                while (attempts < 10 && (baseDen * multiplier2 === currentLockDen && baseNum * multiplier2 === currentLockNum)) {
+                     multiplier2 = getRandomInt(1, 5);
+                     if (multiplier2 === 0) multiplier2 = 1; // Avoid zero multiplier
+                     attempts++;
+                }
+                // Further attempt to differentiate if they are still the same
+                if (baseDen * multiplier2 === currentLockDen && multiplier1 === multiplier2) {
+                    multiplier2 = getRandomInt(1,5);
+                     if (multiplier2 === multiplier1 && baseDen > 1) { // If multiplier is still same and baseDen allows change
+                        multiplier2 = (multiplier1 % 5) + 1; // Cycle through 1-5 to get a different one
+                     }
+                }
+
+                let currentKeyDen = baseDen * multiplier2;
+                // Avoid extremely large denominators for the key
+                if (currentKeyDen > 50 && baseDen > 5) {
+                    multiplier2 = getRandomInt(1, Math.floor(50 / baseDen) || 1);
+                    currentKeyDen = baseDen * multiplier2;
+                }
+                if (currentKeyDen === 0) currentKeyDen = baseDen; // Fallback if multiplier logic results in 0
+
+                let currentExpectedKeyNum = baseNum * multiplier2;
+
+                problemsData.push({
+                    lockNum: currentLockNum,
+                    lockDen: currentLockDen,
+                    keyDen: currentKeyDen,
+                    expectedKeyNum: currentExpectedKeyNum,
+                    userInputId: `keyNumeratorInput_${i}`,
+                    feedbackId: `problemFeedback_${i}`
+                });
+
+                const problemDiv = document.createElement('div');
+                problemDiv.className = 'problem-item bg-slate-50 p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-200';
+                // Using "Замок" instead of "Завдання"
+                problemDiv.innerHTML = `
+                    <h3 class="text-lg font-semibold text-indigo-600 mb-2">Замок ${i + 1}</h3>
+                    <div class="grid grid-cols-2 gap-3 items-start">
+                        <div>
+                            <p class="text-sm text-slate-500 mb-1">🔒 Замок:</p>
+                            <div class="fraction-display">
+                                <span class="numerator">${currentLockNum}</span>
+                                <div class="fraction-line"></div>
+                                <span class="denominator">${currentLockDen}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm text-lime-500 mb-1">🗝️ Ключ:</p>
+                            <div class="fraction-display">
+                                <input type="number" id="keyNumeratorInput_${i}" placeholder="?" class="input-default focus:ring-lime-500 focus:border-lime-500">
+                                <div class="fraction-line"></div>
+                                <span class="denominator">${currentKeyDen}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="problemFeedback_${i}" class="mt-2 text-xs h-4"></div> `;
+                problemsContainer.appendChild(problemDiv);
+            }
+            hideModal(); // Hide modal if it was open from previous check
+        }
+
+        function checkAllFractions() {
+            // This function checks all 5 user answers.
+            let correctCount = 0;
+            let allInputsFilled = true; // Check if all inputs are filled
+            let feedbackSummaryLines = [];
+
+            if (problemsData.length === 0) {
+                showModal("Спочатку згенеруйте набір замків.", "Помилка");
+                return;
+            }
+
+            for (let i = 0; i < problemsData.length; i++) {
+                const problem = problemsData[i];
+                const userInputElement = document.getElementById(problem.userInputId);
+                const problemFeedbackEl = document.getElementById(problem.feedbackId);
+                const userAnswer = parseInt(userInputElement.value);
+
+                // Reset previous feedback and input styling
+                problemFeedbackEl.textContent = '';
+                userInputElement.classList.remove('input-correct', 'input-incorrect', 'input-default');
+                userInputElement.classList.add('input-default');
+
+
+                if (isNaN(userAnswer)) {
+                    problemFeedbackEl.textContent = "Введіть число!";
+                    problemFeedbackEl.className = 'mt-2 text-xs h-4 text-orange-500 font-semibold';
+                    userInputElement.classList.replace('input-default','input-incorrect');
+                    allInputsFilled = false; // Mark that not all inputs were valid numbers
+                    // Add info to modal that this problem was skipped
+                    feedbackSummaryLines.push(`<b>Замок ${i + 1}:</b> ⚠️ Немає відповіді. (${problem.lockNum}/${problem.lockDen} = ?/${problem.keyDen}, вірно: ${problem.expectedKeyNum})`);
+                    continue; // Skip to next problem
+                }
+
+                // Check for fraction equality
+                if (problem.lockNum * problem.keyDen === userAnswer * problem.lockDen) {
+                    correctCount++;
+                    problemFeedbackEl.textContent = "✅ Правильно!";
+                    problemFeedbackEl.className = 'mt-2 text-xs h-4 text-green-600 font-semibold';
+                    userInputElement.classList.replace('input-default','input-correct');
+                    // Add detailed correct info to modal summary
+                    feedbackSummaryLines.push(`<b>Замок ${i + 1}:</b> ✅ Правильно! (${userAnswer}/${problem.keyDen} = ${problem.lockNum}/${problem.lockDen})`);
+                } else {
+                    problemFeedbackEl.textContent = "❌ Неправильно."; // Don't reveal correct answer here
+                    problemFeedbackEl.className = 'mt-2 text-xs h-4 text-red-600 font-semibold';
+                    userInputElement.classList.replace('input-default','input-incorrect');
+                    // Add detailed incorrect info (with correct answer) to modal summary
+                    feedbackSummaryLines.push(`<b>Замок ${i + 1}:</b> ❌ Неправильно. Ваша відповідь: ${userAnswer}, правильно: ${problem.expectedKeyNum}. (${problem.expectedKeyNum}/${problem.keyDen} = ${problem.lockNum}/${problem.lockDen})`);
+                }
+            }
+
+            let modalMessage = "";
+            if (!allInputsFilled) {
+                 modalMessage += `Будь ласка, введіть чисельники для всіх замків.<br><br>`;
+            }
+            modalMessage += `Ви правильно вирішили <b>${correctCount} з ${NUM_PROBLEMS}</b> замків.<br><br><hr class="my-2"><br>Детальний розбір:<br><br>` + feedbackSummaryLines.join('<br>');
+
+            // Suggest new set if many errors
+            if (correctCount <= NUM_PROBLEMS / 2 && NUM_PROBLEMS > 0) {
+                modalMessage += `<br><br>Багато помилок. Можливо, варто спробувати <button class='inline-button-link' onclick='generateNewProblemSet(); hideModal();'>новий набір замків</button>?`;
+            }
+
+            showModal(modalMessage);
+        }
+
+        // Generate the first set of problems when the page loads
+        window.onload = generateNewProblemSet;
+    </script>
+
+    <footer style="text-align:center; color:#888; font-size:0.98em; padding:18px 0 12px 0;">
+        © 2024-2025 Математичні тренажери. Колгатін Андрій Олександрович.
+    </footer>
+</body>
+</html>

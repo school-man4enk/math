@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Пошук скарбу</title>
+  <style>
+    .found-message {
+      text-align: center;
+      padding: 20px;
+      background-color: #f0fff0;
+      border: 2px solid #a5d6a7;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    @keyframes openBox {
+      0% { transform: scale(1) rotateY(0deg); background-color: #fff; }
+      50% { transform: scale(1.05) rotateY(90deg); background-color: #d4ffd4; }
+      100% { transform: scale(1) rotateY(180deg); background-color: #ffffff; }
+    }
+    @keyframes moveAnim {
+      0% { transform: scale(1); background-color: #4caf50; }
+      50% { transform: scale(1.2); background-color: #66bb6a; }
+      100% { transform: scale(1); background-color: #4caf50; }
+    }
+    body {
+      font-family: sans-serif;
+      background-color: #f4f8ff;
+      text-align: center;
+      padding: 30px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(10, 40px);
+      grid-template-rows: repeat(10, 40px);
+      gap: 2px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    .cell {
+      width: 40px;
+      height: 40px;
+      background-color: #e0e0e0;
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .player {
+      background-color: #4caf50;
+      color: white;
+    }
+    .compass {
+      margin: 15px auto;
+      font-size: 1.2em;
+    }
+    .dig-button {
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h2>Знайди закопаний скарб!</h2>
+  <p>Натискай на клітинки, щоб переміститися. Скарб захований десь на полі 10x10, але не ближче ніж 5 кроків від старту.</p>
+
+  <div class="compass" id="compass">Відстань до скарбу: ?</div>
+
+  <div class="grid" id="grid"></div>
+
+  <button class="dig-button" id="digButton" onclick="dig()">Копати!</button>
+
+  <script>
+    const gridSize = 10;
+    const grid = document.getElementById("grid");
+    const compass = document.getElementById("compass");
+    const digButton = document.getElementById("digButton");
+
+    let playerPos = { x: 0, y: 0 };
+
+    let treasurePos;
+    do {
+      treasurePos = {
+        x: Math.floor(Math.random() * gridSize),
+        y: Math.floor(Math.random() * gridSize)
+      };
+    } while (distance(playerPos, treasurePos) < 5);
+
+    function distance(a, b) {
+      return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+    }
+
+    function updateCompass() {
+      const dist = distance(playerPos, treasurePos);
+      compass.innerText = `Відстань до скарбу: ${dist}`;
+      if (dist === 0) {
+        digButton.style.display = 'inline-block';
+      } else {
+        digButton.style.display = 'none';
+      }
+    }
+
+    function renderGrid() {
+      grid.innerHTML = "";
+      for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          if (playerPos.x === x && playerPos.y === y) {
+            cell.classList.add("player");
+            cell.style.animation = "moveAnim 0.3s ease";
+            cell.textContent = "🧭";
+          }
+          cell.addEventListener("click", () => movePlayer(x, y));
+          grid.appendChild(cell);
+        }
+      }
+    }
+
+    function movePlayer(x, y) {
+      const dx = Math.abs(x - playerPos.x);
+      const dy = Math.abs(y - playerPos.y);
+      if ((dx + dy) !== 1) return;
+      playerPos = { x, y };
+      renderGrid();
+      updateCompass();
+    }
+
+    function dig() {
+      const box = document.querySelector(".grid");
+      box.style.animation = "openBox 1s ease-in-out";
+      setTimeout(() => {
+        box.classList.remove('grid');
+        box.innerHTML = `
+          <div class='found-message'>
+            <svg width='150' height='100' viewBox='0 0 150 100' style='margin-bottom: 20px;'>
+              <rect x='10' y='40' width='130' height='50' fill='#8B4513' stroke='black' stroke-width='2'/>
+              <path d='M10 40 Q75 0 140 40' fill='#D2691E' stroke='black' stroke-width='2'/>
+              <circle cx='75' cy='65' r='5' fill='gold'/>
+            </svg>
+            <h2>Вітаю, ти знайшов скриньку! Давай подивимось що всередині</h2>
+            <div style='margin-top: 40px; font-size: 1.2em;'>
+              От лишенько..., а ключа то в нас немає...<br><br>
+              <a href='scroll.html' style='font-size: 1.1em; color: darkblue; text-decoration: underline;'>Спробувати підібрати ключ</a>
+            </div>
+          </div>`;
+      }, 1000);
+    }
+
+    renderGrid();
+    updateCompass();
+  </script>
+
+  <footer style="text-align:center; color:#888; font-size:0.98em; padding:18px 0 12px 0;">
+        © 2024-2025 Математичні тренажери. Колгатін Андрій Олександрович.
+    </footer>
+</body>
+</html>
