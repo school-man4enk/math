@@ -277,7 +277,7 @@
                     userInputElement.classList.replace('input-default','input-incorrect');
                     allInputsFilled = false; // Mark that not all inputs were valid numbers
                     // Add info to modal that this problem was skipped
-                    feedbackSummaryLines.push(`<b>Замок ${i + 1}:</b> ⚠️ Немає відповіді. (${problem.lockNum}/${problem.lockDen} = ?/${problem.keyDen}, вірно: ${problem.expectedKeyNum})`);
+                    feedbackSummaryLines.push(`<b>Замок ${i + 1}:</b> ⚠️ Немає відповіді. (${problem.lockNum}/${problem.lockDen} = ?/${problem.keyDen})`);
                     continue; // Skip to next problem
                 }
 
