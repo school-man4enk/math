@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Розкладання на прості множники</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            margin: 50px; 
+            background-color: #f8f8f8; 
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .level-selector {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .level-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: 2px solid #6a5acd;
+            background-color: white;
+            color: #6a5acd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .level-btn.active {
+            background-color: #6a5acd;
+            color: white;
+        }
+        .factorization-table {
+            display: inline-block;
+            margin: 20px auto;
+            border: 2px solid #6a5acd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .factor-row {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+        .factor-row:last-child {
+            border-bottom: none;
+        }
+        .number-cell {
+            min-width: 80px;
+            padding: 10px 15px;
+            font-size: 24px;
+            font-weight: bold;
+            border-right: 3px solid #6a5acd;
+            background-color: #f0f0ff;
+        }
+        .number-cell input {
+            width: 70px;
+            height: 40px;
+            font-size: 22px;
+            text-align: center;
+            border: 2px solid #6a5acd;
+            border-radius: 5px;
+        }
+        .divisor-cell {
+            min-width: 60px;
+            padding: 10px 15px;
+            font-size: 24px;
+        }
+        .divisor-cell input {
+            width: 50px;
+            height: 40px;
+            font-size: 22px;
+            text-align: center;
+            border: 2px solid #6a5acd;
+            border-radius: 5px;
+        }
+        .correct {
+            background-color: #d4ffd4 !important;
+            border-color: #4caf50 !important;
+        }
+        .incorrect {
+            background-color: #ffd4d4 !important;
+            border-color: #f44336 !important;
+        }
+        .canonical-form {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #2e7d32;
+            display: none;
+        }
+        .check-button {
+            margin: 10px 5px;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            background-color: #6a5acd;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .check-button:hover {
+            background-color: #483d8b;
+        }
+        .check-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .hint-button {
+            background-color: #ff9800;
+        }
+        .hint-button:hover {
+            background-color: #f57c00;
+        }
+        .stats {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 18px;
+        }
+        .stat-item {
+            padding: 10px 20px;
+            border-radius: 10px;
+            background-color: #f0f0ff;
+        }
+        .error-message {
+            color: #f44336;
+            font-size: 16px;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+        .success-message {
+            color: #4caf50;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 15px; margin: 20px; }
+            .number-cell, .divisor-cell { font-size: 18px; }
+            .number-cell input, .divisor-cell input { font-size: 16px; width: 40px; height: 30px; }
+            .level-selector { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <a href="/math" title="На головну" style="position: absolute; left: 20px; top: 20px; text-decoration: none; font-size: 28px; color: #6a5acd; background: #fff; border: 1px solid #6a5acd; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; box-shadow: 0 2px 6px #eee;">
+        &#8592;
+    </a>
+    
+    <div class="container">
+        <h2>Розкладання на прості множники</h2>
+        
+        <div class="level-selector">
+            <button class="level-btn active" onclick="setLevel('simple')">Простий рівень</button>
+            <button style="visibility:none;" class="level-btn" onclick="setLevel('advanced')">Ускладнений рівень</button>
+        </div>
+        
+        <div id="currentNumber" style="font-size: 28px; color: #6a5acd; font-weight: bold; margin: 20px 0;">
+            Розклади число: <span id="numberDisplay">0</span>
+        </div>
+        
+        <div class="factorization-table" id="factorTable">
+            <!-- Рядки будуть додаватись динамічно -->
+        </div>
+        
+        <div class="error-message" id="errorMessage"></div>
+        <div class="canonical-form" id="canonicalForm"></div>
+        
+        <div style="margin: 20px 0;">
+            <button class="check-button hint-button" onclick="showHint()">💡 Підказка</button>
+            <button class="check-button" onclick="newNumber()">Нове число</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                Розкладено: <strong><span id="successCount">0</span></strong>
+            </div>
+            <div class="stat-item">
+                Помилок: <strong><span id="errorCount">0</span></strong>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentNumber = 0;
+        let currentValue = 0;
+        let level = 'simple'; // 'simple' or 'advanced'
+        let factorSteps = [];
+        let successCount = 0;
+        let errorCount = 0;
+        let hintsUsed = 0;
+
+        function setLevel(newLevel) {
+            level = newLevel;
+            document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            newNumber();
+        }
+
+        function isPrime(num) {
+            if (num < 2) return false;
+            if (num === 2) return true;
+            if (num % 2 === 0) return false;
+            for (let i = 3; i * i <= num; i += 2) {
+                if (num % i === 0) return false;
+            }
+            return true;
+        }
+
+        function getSmallestPrimeFactor(num) {
+            if (num % 2 === 0) return 2;
+            for (let i = 3; i * i <= num; i += 2) {
+                if (num % i === 0) return i;
+            }
+            return num;
+        }
+
+        function generateNumber() {
+            // Генеруємо число від 4 до 1000, яке не є простим
+            let num;
+            do {
+                num = Math.floor(Math.random() * 997) + 4;
+            } while (isPrime(num));
+            return num;
+        }
+
+        function newNumber() {
+            currentNumber = generateNumber();
+            currentValue = currentNumber;
+            factorSteps = [];
+            hintsUsed = 0;
+            document.getElementById('numberDisplay').textContent = currentNumber;
+            document.getElementById('canonicalForm').style.display = 'none';
+            document.getElementById('errorMessage').textContent = '';
+            renderTable();
+        }
+
+        function renderTable() {
+            const table = document.getElementById('factorTable');
+            table.innerHTML = '';
+            
+            // Якщо це перший крок, показуємо початкове число
+            if (factorSteps.length === 0 && currentValue > 1) {
+                const firstRow = document.createElement('div');
+                firstRow.className = 'factor-row';
+                
+                if (level === 'advanced') {
+                    firstRow.innerHTML = `
+                        <div class="number-cell" style="background-color: #f0f0ff;">${currentValue}</div>
+                        <div class="divisor-cell"><input type="number" id="divInput_0" min="2" onkeydown="if(event.key==='Enter') checkInput(0)" /></div>
+                    `;
+                } else {
+                    firstRow.innerHTML = `
+                        <div class="number-cell" style="background-color: #f0f0ff;">${currentValue}</div>
+                        <div class="divisor-cell"><input type="number" id="divInput_0" min="2" onkeydown="if(event.key==='Enter') checkInput(0)" /></div>
+                    `;
+                }
+                
+                table.appendChild(firstRow);
+                setTimeout(() => {
+                    const input = document.getElementById('divInput_0');
+                    if (input) input.focus();
+                }, 100);
+                return;
+            }
+            
+            // Показуємо всі попередні кроки
+            factorSteps.forEach((step, index) => {
+                const row = createRow(step.value, step.divisor, true, index);
+                table.appendChild(row);
+            });
+            
+            // Додаємо поточний рядок для вводу
+            if (currentValue > 1) {
+                const row = createRow(currentValue, null, false, factorSteps.length);
+                table.appendChild(row);
+            }
+            
+            // Якщо розклад завершено
+            if (currentValue === 1) {
+                const finalRow = document.createElement('div');
+                finalRow.className = 'factor-row';
+                finalRow.innerHTML = `
+                    <div class="number-cell" style="background-color: #d4ffd4;">1</div>
+                    <div class="divisor-cell"></div>
+                `;
+                table.appendChild(finalRow);
+                showCanonicalForm();
+            }
+        }
+
+        function createRow(numberValue, divisorValue, readonly, index) {
+            const row = document.createElement('div');
+            row.className = 'factor-row';
+            
+            const numberCell = document.createElement('div');
+            numberCell.className = 'number-cell';
+            
+            if (level === 'advanced' && !readonly) {
+                numberCell.innerHTML = `<input type="number" id="numInput_${index}" min="1" disabled />`;
+            } else {
+                numberCell.textContent = numberValue;
+                if (readonly) numberCell.style.backgroundColor = '#d4ffd4';
+            }
+            
+            const divisorCell = document.createElement('div');
+            divisorCell.className = 'divisor-cell';
+            
+            if (!readonly) {
+                divisorCell.innerHTML = `<input type="number" id="divInput_${index}" min="2" onkeydown="if(event.key==='Enter') checkInput(${index})" />`;
+                setTimeout(() => {
+                    const input = document.getElementById(`divInput_${index}`);
+                    if (input) input.focus();
+                }, 100);
+            } else {
+                divisorCell.textContent = divisorValue;
+            }
+            
+            row.appendChild(numberCell);
+            row.appendChild(divisorCell);
+            
+            return row;
+        }
+
+        function checkInput(index) {
+            const divInput = document.getElementById(`divInput_${index}`);
+            const divisor = parseInt(divInput.value);
+            
+            if (!divisor || divisor < 2) {
+                showError('Введіть ціле число більше 1');
+                return;
+            }
+            
+            if (!isPrime(divisor)) {
+                showError(`Число ${divisor} не є простим! Використовуй тільки прості числа: 2, 3, 5, 7, 11, 13...`);
+                divInput.classList.add('incorrect');
+                errorCount++;
+                updateStats();
+                setTimeout(() => divInput.classList.remove('incorrect'), 2000);
+                return;
+            }
+            
+            if (currentValue % divisor !== 0) {
+                showError(`Число ${currentValue} не ділиться на ${divisor} без залишку!`);
+                divInput.classList.add('incorrect');
+                errorCount++;
+                updateStats();
+                setTimeout(() => divInput.classList.remove('incorrect'), 2000);
+                return;
+            }
+            
+            // Правильний дільник
+            divInput.classList.add('correct');
+            divInput.disabled = true;
+            document.getElementById('errorMessage').textContent = '';
+            
+            if (level === 'advanced') {
+                // В ускладненому режимі додаємо новий рядок з полем для результату
+                const table = document.getElementById('factorTable');
+                const newRow = document.createElement('div');
+                newRow.className = 'factor-row';
+                newRow.innerHTML = `
+                    <div class="number-cell"><input type="number" id="numInput_${index}" min="1" /></div>
+                    <div class="divisor-cell"></div>
+                `;
+                table.appendChild(newRow);
+                
+                setTimeout(() => {
+                    const numInput = document.getElementById(`numInput_${index}`);
+                    if (numInput) {
+                        numInput.focus();
+                        numInput.onkeydown = (e) => {
+                            if (e.key === 'Enter') checkAdvancedInput(index, divisor);
+                        };
+                    }
+                }, 100);
+            } else {
+                // В простому режимі автоматично ділимо
+                const newValue = currentValue / divisor;
+                factorSteps.push({ value: currentValue, divisor: divisor });
+                currentValue = newValue;
+                renderTable();
+                
+                if (currentValue === 1) {
+                    successCount++;
+                    updateStats();
+                }
+            }
+        }
+
+        function checkAdvancedInput(index, divisor) {
+            const numInput = document.getElementById(`numInput_${index}`);
+            if (!numInput) return;
+            
+            const userResult = parseInt(numInput.value);
+            const correctResult = currentValue / divisor;
+            
+            if (userResult !== correctResult) {
+                showError(`Неправильно! ${currentValue} ÷ ${divisor} = ${correctResult}`);
+                numInput.classList.add('incorrect');
+                errorCount++;
+                updateStats();
+                setTimeout(() => numInput.classList.remove('incorrect'), 2000);
+                return;
+            }
+            
+            // Правильна відповідь
+            numInput.classList.add('correct');
+            numInput.disabled = true;
+            factorSteps.push({ value: currentValue, divisor: divisor });
+            currentValue = correctResult;
+            document.getElementById('errorMessage').textContent = '';
+            renderTable();
+            
+            if (currentValue === 1) {
+                successCount++;
+                updateStats();
+            }
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            setTimeout(() => errorEl.textContent = '', 5000);
+        }
+
+        function showHint() {
+            const hint = getSmallestPrimeFactor(currentValue);
+            showError(`💡 Підказка: спробуй поділити на ${hint}`);
+            hintsUsed++;
+        }
+
+        function showCanonicalForm() {
+            const factors = {};
+            factorSteps.forEach(step => {
+                factors[step.divisor] = (factors[step.divisor] || 0) + 1;
+            });
+            
+            const canonical = Object.entries(factors)
+                .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+                .map(([base, power]) => power > 1 ? `${base}²³⁴⁵⁶⁷⁸⁹`[power] ? base + '²³⁴⁵⁶⁷⁸⁹'[power - 1] : `${base}^${power}` : base)
+                .join(' × ');
+            
+            const canonicalEl = document.getElementById('canonicalForm');
+            canonicalEl.textContent = `${currentNumber} = ${canonical}`;
+            canonicalEl.style.display = 'block';
+            
+            if (hintsUsed === 0) {
+                canonicalEl.textContent += ' 🎉 Відмінно! Без підказок!';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('successCount').textContent = successCount;
+            document.getElementById('errorCount').textContent = errorCount;
+        }
+
+        // Ініціалізація
+        newNumber();
+    </script>
+
+    <footer style="text-align:center; color:#888; font-size:0.98em; padding:18px 0 12px 0;">
+        © 2024-2025 Математичні тренажери. Колгатін Андрій Олександрович.
+    </footer>
+</body>
+</html>
