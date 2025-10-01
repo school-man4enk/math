@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ознаки подільності</title>
+    <style>
+        @keyframes numberChange {
+            0% { transform: scale(1) rotateY(0deg); opacity: 1; }
+            50% { transform: scale(0.8) rotateY(90deg); opacity: 0.3; }
+            100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            margin: 50px; 
+            background-color: #f8f8f8; 
+        }
+        .exercise { 
+            display: inline-block; 
+            text-align: center; 
+            margin: 20px; 
+            max-width: 800px;
+        }
+        .number-display { 
+            font-size: 64px; 
+            font-weight: bold; 
+            margin: 30px 0; 
+            color: #6a5acd;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .number-display.changing {
+            animation: numberChange 0.6s ease-in-out;
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .divisor-button {
+            padding: 15px 30px;
+            font-size: 22px;
+            border: 3px solid #6a5acd;
+            background-color: white;
+            color: #6a5acd;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 80px;
+            font-weight: bold;
+        }
+        .divisor-button:hover {
+            background-color: #f0f0ff;
+            transform: scale(1.05);
+        }
+        .divisor-button.selected {
+            background-color: #6a5acd;
+            color: white;
+        }
+        .divisor-button.fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+        .check-button { 
+            margin-top: 20px; 
+            padding: 12px 30px; 
+            font-size: 20px; 
+            border: none; 
+            background-color: #4caf50; 
+            color: white; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            transition: background 0.3s;
+            font-weight: bold;
+        }
+        .check-button:hover {
+            background-color: #45a049;
+        }
+        .check-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .next-button {
+            background-color: #2196F3;
+        }
+        .next-button:hover {
+            background-color: #0b7dda;
+        }
+        #result { 
+            font-size: 20px; 
+            margin-top: 20px; 
+            min-height: 30px;
+            font-weight: bold;
+        }
+        .stats {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .rules-section {
+            text-align: left;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .rules-section h3 {
+            color: #6a5acd;
+            margin-top: 0;
+        }
+        .rules-section ul {
+            line-height: 1.8;
+        }
+        .rules-section li {
+            margin: 8px 0;
+        }
+        .toggle-rules {
+            background-color: #6a5acd;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .toggle-rules:hover {
+            background-color: #5a4abd;
+        }
+        @media (max-width: 600px) {
+            .number-display { font-size: 48px; }
+            .divisor-button { padding: 12px 20px; font-size: 18px; min-width: 60px; }
+            .buttons-container { gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <a href="/math" title="На головну" style="position: absolute; left: 20px; top: 20px; text-decoration: none; font-size: 28px; color: #6a5acd; background: #fff; border: 1px solid #6a5acd; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; box-shadow: 0 2px 6px #eee;">
+        &#8592;
+    </a>
+
+    <h2>Ознаки подільності чисел</h2>
+
+    <div class="exercise">
+        <button class="toggle-rules" onclick="toggleRules()">📖 Показати/сховати правила</button>
+        
+        <div class="rules-section" id="rulesSection" style="display: none;">
+            <h3>Ознаки подільності:</h3>
+            <ul>
+                <li><strong>На 2:</strong> число ділиться на 2, якщо остання цифра парна (0, 2, 4, 6, 8)</li>
+                <li><strong>На 5:</strong> число ділиться на 5, якщо остання цифра 0 або 5</li>
+                <li><strong>На 10:</strong> число ділиться на 10, якщо остання цифра 0</li>
+                <li><strong>На 3:</strong> число ділиться на 3, якщо сума його цифр ділиться на 3</li>
+                <li><strong>На 9:</strong> число ділиться на 9, якщо сума його цифр ділиться на 9</li>
+            </ul>
+        </div>
+
+        <div class="number-display" id="numberDisplay">123</div>
+        
+        <div class="question">На які з цих чисел ділиться дане число?<br>Оберіть <strong>всі</strong> правильні варіанти:</div>
+        
+        <div class="buttons-container" id="buttonsContainer">
+            <button class="divisor-button" onclick="toggleDivisor(2, this)">2</button>
+            <button class="divisor-button" onclick="toggleDivisor(5, this)">5</button>
+            <button class="divisor-button" onclick="toggleDivisor(10, this)">10</button>
+            <button class="divisor-button" onclick="toggleDivisor(3, this)">3</button>
+            <button class="divisor-button" onclick="toggleDivisor(9, this)">9</button>
+        </div>
+
+        <button class="check-button" id="checkBtn" onclick="checkAnswer()">Перевірити</button>
+        <button class="check-button next-button" id="nextBtn" onclick="newQuestion()" style="display: none;">Наступне число</button>
+        
+        <p id="result"></p>
+        
+        <div class="stats">
+            <p>Успішні спроби: <span id="successCount">0</span></p>
+            <p>Неуспішні спроби: <span id="failureCount">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        let currentNumber = 0;
+        let correctDivisors = [];
+        let selectedDivisors = [];
+        let successCount = 0;
+        let failureCount = 0;
+
+        const numberDisplay = document.getElementById('numberDisplay');
+        const resultElem = document.getElementById('result');
+        const checkBtn = document.getElementById('checkBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const successCountElem = document.getElementById('successCount');
+        const failureCountElem = document.getElementById('failureCount');
+
+        function toggleRules() {
+            const rules = document.getElementById('rulesSection');
+            rules.style.display = rules.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function checkDivisibility(num) {
+            const divisors = [];
+            
+            // Перевірка на 2
+            if (num % 2 === 0) divisors.push(2);
+            
+            // Перевірка на 5
+            if (num % 5 === 0) divisors.push(5);
+            
+            // Перевірка на 10
+            if (num % 10 === 0) divisors.push(10);
+            
+            // Перевірка на 3
+            if (num % 3 === 0) divisors.push(3);
+            
+            // Перевірка на 9
+            if (num % 9 === 0) divisors.push(9);
+            
+            return divisors;
+        }
+
+        function generateNumber() {
+            let num;
+            let divisors;
+            
+            // Генеруємо число, яке ділиться хоча б на одне з потрібних чисел
+            do {
+                num = getRandomInt(100, 999);
+                divisors = checkDivisibility(num);
+            } while (divisors.length === 0);
+            
+            return { number: num, divisors: divisors };
+        }
+
+        function newQuestion() {
+            // Додаємо анімацію до числа
+            numberDisplay.classList.add('changing');
+            
+            // Скидаємо стан
+            selectedDivisors = [];
+            resultElem.textContent = '';
+            resultElem.style.color = '';
+            checkBtn.style.display = '';
+            nextBtn.style.display = 'none';
+            
+            // Скидаємо кнопки з анімацією
+            const buttons = document.querySelectorAll('.divisor-button');
+            buttons.forEach((btn, index) => {
+                btn.classList.remove('selected', 'fade-in');
+                btn.disabled = false;
+                // Додаємо анімацію з затримкою для кожної кнопки
+                setTimeout(() => {
+                    btn.classList.add('fade-in');
+                }, index * 80);
+            });
+            
+            // Генеруємо нове число після початку анімації
+            setTimeout(() => {
+                const data = generateNumber();
+                currentNumber = data.number;
+                correctDivisors = data.divisors;
+                
+                numberDisplay.textContent = currentNumber;
+                
+                // Прибираємо клас анімації після завершення
+                setTimeout(() => {
+                    numberDisplay.classList.remove('changing');
+                }, 100);
+            }, 300);
+        }
+
+        function toggleDivisor(divisor, buttonElem) {
+            const index = selectedDivisors.indexOf(divisor);
+            
+            if (index === -1) {
+                selectedDivisors.push(divisor);
+                buttonElem.classList.add('selected');
+            } else {
+                selectedDivisors.splice(index, 1);
+                buttonElem.classList.remove('selected');
+            }
+        }
+
+        function checkAnswer() {
+            if (selectedDivisors.length === 0) {
+                resultElem.textContent = "Оберіть хоча б один варіант!";
+                resultElem.style.color = "orange";
+                return;
+            }
+
+            // Сортуємо для порівняння
+            const selected = [...selectedDivisors].sort((a, b) => a - b);
+            const correct = [...correctDivisors].sort((a, b) => a - b);
+            
+            // Перевіряємо чи масиви однакові
+            const isCorrect = selected.length === correct.length && 
+                            selected.every((val, index) => val === correct[index]);
+            
+            if (isCorrect) {
+                resultElem.textContent = "Молодець, правильно! ✓";
+                resultElem.style.color = "green";
+                successCount++;
+                successCountElem.textContent = successCount;
+                checkBtn.style.display = 'none';
+                nextBtn.style.display = '';
+                
+                // Блокуємо кнопки
+                const buttons = document.querySelectorAll('.divisor-button');
+                buttons.forEach(btn => btn.disabled = true);
+            } else {
+                failureCount++;
+                failureCountElem.textContent = failureCount;
+                
+                // Формуємо детальну відповідь
+                let message = "Неправильно. ";
+                
+                // Перевіряємо зайві відповіді
+                const extra = selected.filter(d => !correct.includes(d));
+                if (extra.length > 0) {
+                    message += `Число НЕ ділиться на: ${extra.join(', ')}. `;
+                }
+                
+                // Перевіряємо пропущені відповіді
+                const missed = correct.filter(d => !selected.includes(d));
+                if (missed.length > 0) {
+                    message += `Ви пропустили: ${missed.join(', ')}. `;
+                }
+                
+                message += `\nПравильна відповідь: ${correct.join(', ')}`;
+                
+                resultElem.textContent = message;
+                resultElem.style.color = "red";
+                resultElem.style.whiteSpace = "pre-line";
+            }
+        }
+
+        // Ініціалізація
+        newQuestion();
+    </script>
+
+    <footer style="text-align:center; color:#888; font-size:0.98em; padding:18px 0 12px 0;">
+        © 2024-2025 Математичні тренажери. Колгатін Андрій Олександрович.
+    </footer>
+</body>
+</html>
