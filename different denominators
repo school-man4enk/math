@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дроби з різними знаменниками</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            margin: 50px; 
+            background-color: #f8f8f8; 
+        }
+        .exercise { 
+            display: inline-block; 
+            text-align: center; 
+            margin: 20px; 
+            max-width: 800px;
+        }
+        .frac-row { 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-end; 
+            margin-bottom: 20px; 
+        }
+        .frac {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+        }
+        .frac input, .frac .num, .frac .den {
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid #a195ee;
+            border-radius: 8px;
+            margin: 0;
+            background: #fff;
+        }
+        .frac .line {
+            width: 50px;
+            height: 3px;
+            background: #6a5acd;
+            margin: 0;
+        }
+        .sign {
+            font-size: 36px;
+            margin: 0 15px;
+            color: #6a5acd;
+            font-weight: bold;
+            position: relative;
+            top: -25px;
+        }
+        .equals {
+            font-size: 36px;
+            margin: 0 15px;
+            color: #222;
+            font-weight: bold;
+            position: relative;
+            top: -25px;
+        }
+        .lcm-section {
+            margin: 25px 0;
+            padding: 15px;
+            background: #e8f4f8;
+            border-radius: 10px;
+            border: 2px solid #6a5acd;
+        }
+        .lcm-label {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .lcm-input {
+            width: 80px;
+            height: 45px;
+            font-size: 24px;
+            text-align: center;
+            border: 3px solid #4caf50;
+            border-radius: 8px;
+            background: #fff;
+        }
+        .hint-box {
+            display: none;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            text-align: left;
+            max-width: 600px;
+        }
+        .hint-box h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+        .hint-step {
+            margin: 12px 0;
+            padding: 10px;
+            background: #fff;
+            border-left: 4px solid #ffc107;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .check-button { 
+            margin: 10px 8px; 
+            padding: 12px 24px; 
+            font-size: 18px; 
+            border: none; 
+            background-color: #6a5acd; 
+            color: white; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            transition: background 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .check-button:hover {
+            background-color: #5a4ab7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .hint-button {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .hint-button:hover {
+            background-color: #e0a800;
+        }
+        #result { 
+            font-size: 22px; 
+            margin-top: 15px; 
+            font-weight: bold;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        .stat-value {
+            font-weight: bold;
+            font-size: 20px;
+            color: #6a5acd;
+        }
+        .input-correct {
+            border-color: #4caf50 !important;
+            background-color: #e8f5e9 !important;
+        }
+        .input-incorrect {
+            border-color: #f44336 !important;
+            background-color: #ffebee !important;
+        }
+        @media (max-width: 600px) {
+            .frac input, .frac .num, .frac .den { 
+                width: 38px; 
+                height: 38px; 
+                font-size: 18px; 
+            }
+            .sign, .equals { 
+                font-size: 28px; 
+            }
+            .lcm-input {
+                width: 60px;
+                height: 35px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/math" title="На головну" style="position: absolute; left: 20px; top: 20px; text-decoration: none; font-size: 28px; color: #6a5acd; background: #fff; border: 1px solid #6a5acd; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; box-shadow: 0 2px 6px #eee;">
+        &#8592;
+    </a>
+    
+    <h2>Додавання та віднімання дробів з різними знаменниками</h2>
+    <p style="color: #666; font-size: 16px;">Знайди НСК знаменників, а потім обчисли результат</p>
+    
+    <div class="exercise">
+        <div class="frac-row" id="task-row">
+            <!-- Приклад генерується тут -->
+        </div>
+        
+        <div class="lcm-section">
+            <div class="lcm-label">НСК(<span id="den1-display"></span>, <span id="den2-display"></span>) =</div>
+            <input class="lcm-input" type="number" id="lcm-input" placeholder="?" min="1" />
+        </div>
+        
+        <div class="frac-row" id="answer-row">
+            <div class="frac">
+                <input class="num" type="number" id="ans_num" placeholder="числ." min="0" />
+                <div class="line"></div>
+                <input class="den" type="number" id="ans_den" placeholder="знам." min="1" />
+            </div>
+        </div>
+        
+        <div id="hint-box" class="hint-box">
+            <h3>📚 Покрокове розв'язання:</h3>
+            <div id="hint-content"></div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button class="check-button hint-button" id="hint-btn" onclick="showHint()">💡 Підказка</button>
+            <button class="check-button" id="check" onclick="checkAnswer()">Перевірити</button>
+        </div>
+        
+        <p id="result"></p>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">Успішні спроби:</div>
+                <div class="stat-value" id="successCount">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Неуспішні спроби:</div>
+                <div class="stat-value" id="failureCount">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Використано підказок:</div>
+                <div class="stat-value" id="hintCount">0</div>
+            </div>
+        </div>
+        
+        <button class="check-button" id="next" onclick="newQuestion()" style="margin-top: 20px;">Наступний приклад</button>
+    </div>
+    
+    <script>
+        let taskRow = document.getElementById('task-row');
+        let lcmInput = document.getElementById('lcm-input');
+        let ansNum = document.getElementById('ans_num');
+        let ansDen = document.getElementById('ans_den');
+        let checkButton = document.getElementById('check');
+        let nextButton = document.getElementById('next');
+        let hintButton = document.getElementById('hint-btn');
+        let resultElem = document.getElementById('result');
+        let successCountElem = document.getElementById('successCount');
+        let failureCountElem = document.getElementById('failureCount');
+        let hintCountElem = document.getElementById('hintCount');
+        let hintBox = document.getElementById('hint-box');
+        let hintContent = document.getElementById('hint-content');
+        let den1Display = document.getElementById('den1-display');
+        let den2Display = document.getElementById('den2-display');
+
+        let currentProblem = {};
+        let successCount = 0;
+        let failureCount = 0;
+        let hintCount = 0;
+        let hintUsedForCurrentProblem = false;
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function gcd(a, b) {
+            while (b) [a, b] = [b, a % b];
+            return Math.abs(a);
+        }
+
+        function lcm(a, b) {
+            return Math.abs(a * b) / gcd(a, b);
+        }
+
+        function simplify(num, den) {
+            if (den === 0) return [num, 1];
+            let d = gcd(Math.abs(num), Math.abs(den));
+            return [num / d, den / d];
+        }
+
+        function generateCoprimeDenominators() {
+            // Генеруємо знаменники, які не є кратними один одного
+            let den1 = getRandomInt(2, 12);
+            let den2;
+            let attempts = 0;
+            
+            do {
+                den2 = getRandomInt(2, 12);
+                attempts++;
+                // Перевіряємо, що знаменники різні і не кратні один одному
+            } while ((den1 === den2 || den1 % den2 === 0 || den2 % den1 === 0) && attempts < 20);
+            
+            // Якщо не вдалося знайти некратні, просто беремо різні
+            if (den1 === den2) {
+                den2 = den1 + 1;
+            }
+            
+            return [den1, den2];
+        }
+
+        function newQuestion() {
+            nextButton.style.display = "none";
+            checkButton.style.display = "";
+            hintButton.style.display = "";
+            resultElem.textContent = '';
+            hintBox.style.display = 'none';
+            hintUsedForCurrentProblem = false;
+            
+            // Очистити поля
+            lcmInput.value = '';
+            ansNum.value = '';
+            ansDen.value = '';
+            
+            // Зняти readonly
+            lcmInput.removeAttribute('readonly');
+            ansNum.removeAttribute('readonly');
+            ansDen.removeAttribute('readonly');
+            
+            // Очистити стилі
+            lcmInput.classList.remove('input-correct', 'input-incorrect');
+            ansNum.classList.remove('input-correct', 'input-incorrect');
+            ansDen.classList.remove('input-correct', 'input-incorrect');
+
+            // Генерувати дроби з різними знаменниками
+            let [den1, den2] = generateCoprimeDenominators();
+            
+            // Чисельники менші за знаменники (правильні дроби)
+            let num1 = getRandomInt(1, den1 - 1);
+            let num2 = getRandomInt(1, den2 - 1);
+            
+            // Операція
+            let op = getRandomInt(0, 1) ? '+' : '−';
+            
+            // Для віднімання переконаємось, що результат не від'ємний
+            if (op === '−') {
+                let val1 = num1 / den1;
+                let val2 = num2 / den2;
+                if (val1 < val2) {
+                    [num1, den1, num2, den2] = [num2, den2, num1, den1];
+                }
+            }
+
+            // Відображення прикладу
+            taskRow.innerHTML = `
+                <div class="frac">
+                    <input class="num" value="${num1}" readonly />
+                    <div class="line"></div>
+                    <input class="den" value="${den1}" readonly />
+                </div>
+                <span class="sign">${op}</span>
+                <div class="frac">
+                    <input class="num" value="${num2}" readonly />
+                    <div class="line"></div>
+                    <input class="den" value="${den2}" readonly />
+                </div>
+                <span class="equals">=</span>
+            `;
+            
+            den1Display.textContent = den1;
+            den2Display.textContent = den2;
+
+            // Розрахунок правильної відповіді
+            let commonDen = lcm(den1, den2);
+            let newNum1 = num1 * (commonDen / den1);
+            let newNum2 = num2 * (commonDen / den2);
+            let resNum = op === '+' ? newNum1 + newNum2 : newNum1 - newNum2;
+            
+            let [simpNum, simpDen] = simplify(resNum, commonDen);
+
+            currentProblem = {
+                num1: num1,
+                den1: den1,
+                num2: num2,
+                den2: den2,
+                op: op,
+                lcm: commonDen,
+                newNum1: newNum1,
+                newNum2: newNum2,
+                resultNum: simpNum,
+                resultDen: simpDen
+            };
+        }
+
+        function showHint() {
+            if (!hintUsedForCurrentProblem) {
+                hintCount++;
+                hintCountElem.textContent = hintCount;
+                hintUsedForCurrentProblem = true;
+            }
+            
+            let p = currentProblem;
+            let opSymbol = p.op === '+' ? '+' : '−';
+            
+            hintContent.innerHTML = `
+                <div class="hint-step">
+                    <strong>Крок 1:</strong> Знаходимо НСК знаменників ${p.den1} та ${p.den2}<br>
+                    НСК(${p.den1}, ${p.den2}) = <strong>${p.lcm}</strong>
+                </div>
+                <div class="hint-step">
+                    <strong>Крок 2:</strong> Приводимо перший дріб до знаменника ${p.lcm}<br>
+                    ${p.num1}/${p.den1} = ${p.num1} × ${p.lcm / p.den1} / ${p.den1} × ${p.lcm / p.den1} = <strong>${p.newNum1}/${p.lcm}</strong>
+                </div>
+                <div class="hint-step">
+                    <strong>Крок 3:</strong> Приводимо другий дріб до знаменника ${p.lcm}<br>
+                    ${p.num2}/${p.den2} = ${p.num2} × ${p.lcm / p.den2} / ${p.den2} × ${p.lcm / p.den2} = <strong>${p.newNum2}/${p.lcm}</strong>
+                </div>
+                <div class="hint-step">
+                    <strong>Крок 4:</strong> Виконуємо операцію над чисельниками<br>
+                    ${p.newNum1}/${p.lcm} ${opSymbol} ${p.newNum2}/${p.lcm} = ${p.newNum1} ${opSymbol} ${p.newNum2} / ${p.lcm} = <strong>${p.newNum1 + (p.op === '+' ? p.newNum2 : -p.newNum2)}/${p.lcm}</strong>
+                </div>
+                <div class="hint-step">
+                    <strong>Крок 5:</strong> Скорочуємо дріб<br>
+                    ${p.newNum1 + (p.op === '+' ? p.newNum2 : -p.newNum2)}/${p.lcm} = <strong>${p.resultNum}/${p.resultDen}</strong>
+                </div>
+            `;
+            
+            hintBox.style.display = 'block';
+            hintBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function checkAnswer() {
+            let userLcm = parseInt(lcmInput.value);
+            let userNum = parseInt(ansNum.value);
+            let userDen = parseInt(ansDen.value);
+            
+            // Очистити попередні стилі
+            lcmInput.classList.remove('input-correct', 'input-incorrect');
+            ansNum.classList.remove('input-correct', 'input-incorrect');
+            ansDen.classList.remove('input-correct', 'input-incorrect');
+            
+            let allCorrect = true;
+            let message = '';
+            
+            // Перевірка НСК
+            if (isNaN(userLcm)) {
+                message = 'Будь ласка, введіть НСК!';
+                allCorrect = false;
+            } else if (userLcm !== currentProblem.lcm) {
+                lcmInput.classList.add('input-incorrect');
+                message = `НСК неправильний. Підказка: НСК(${currentProblem.den1}, ${currentProblem.den2}) = ${currentProblem.lcm}`;
+                allCorrect = false;
+            } else {
+                lcmInput.classList.add('input-correct');
+            }
+            
+            // Перевірка відповіді
+            if (allCorrect) {
+                if (isNaN(userNum) || isNaN(userDen)) {
+                    message = 'Будь ласка, введіть чисельник і знаменник!';
+                    allCorrect = false;
+                } else {
+                    // Скорочуємо дріб користувача
+                    let [simpUserNum, simpUserDen] = simplify(userNum, userDen);
+                    
+                    if (simpUserNum === currentProblem.resultNum && simpUserDen === currentProblem.resultDen) {
+                        ansNum.classList.add('input-correct');
+                        ansDen.classList.add('input-correct');
+                        message = '🎉 Молодець, правильно!';
+                        resultElem.style.color = 'green';
+                        nextButton.style.display = '';
+                        checkButton.style.display = 'none';
+                        hintButton.style.display = 'none';
+                        successCount++;
+                        successCountElem.textContent = successCount;
+                        
+                        // Зробити поля readonly
+                        lcmInput.setAttribute('readonly', 'readonly');
+                        ansNum.setAttribute('readonly', 'readonly');
+                        ansDen.setAttribute('readonly', 'readonly');
+                    } else {
+                        ansNum.classList.add('input-incorrect');
+                        ansDen.classList.add('input-incorrect');
+                        message = `❌ Неправильно. Перевір обчислення. Правильна відповідь: ${currentProblem.resultNum}/${currentProblem.resultDen}`;
+                        allCorrect = false;
+                    }
+                }
+            }
+            
+            if (!allCorrect) {
+                resultElem.style.color = 'red';
+                failureCount++;
+                failureCountElem.textContent = failureCount;
+            }
+            
+            resultElem.textContent = message;
+        }
+
+        // Enter для перевірки
+        [lcmInput, ansNum, ansDen].forEach(el => {
+            el.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') checkAnswer();
+            });
+        });
+
+        // Ініціалізація
+        newQuestion();
+    </script>
+    
+    <footer style="text-align:center; color:#888; font-size:0.98em; padding:18px 0 12px 0;">
+        © 2024-2025 Математичні тренажери. Колгатін Андрій Олександрович.
+    </footer>
+</body>
+</html>
